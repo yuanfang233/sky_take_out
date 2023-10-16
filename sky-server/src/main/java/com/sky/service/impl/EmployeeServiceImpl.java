@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -96,7 +97,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * 分页查询
      * */
-    @Override
+
     public PageResult pageQuery(EmployeePageQueryDTO employeePageQueryDTO) {
         PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
         Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
@@ -109,7 +110,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * 启用禁用员工账号
      * */
-    @Override
+
     public void startOrStop(Integer status, Long id) {
 //        Employee employee = new Employee();
 //        employee.setStatus(status);
@@ -119,6 +120,27 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .status(status)
                 .id(id)
                 .build();
+        employeeMapper.Update(employee);
+    }
+
+    /**
+     * 根据id查询员工信息
+     * */
+    public Employee getById(Long id) {
+        Employee employee = employeeMapper.getById(id);
+        employee.setPassword("****");
+        return employee;
+    }
+
+    /**
+     * 编辑员工信息
+     * */
+    public void update(EmployeeDTO employeeDTO) {
+        Employee employee = new Employee();
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId());
         employeeMapper.Update(employee);
     }
 
